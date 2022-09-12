@@ -1,4 +1,5 @@
 {% load static %}
+{% load widget_tweaks %}
 <!-- Navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid justify-content-between">
@@ -35,9 +36,45 @@
             </li>
             {% if request.user.is_authenticated %}
                 <li class="nav-item me-3 me-lg-1">
-                    <a class="nav-link chat" href="{% url 'post:create_post' %}">
+                    {% comment %} <a class="nav-link chat" href="{% url 'post:create_post' %}" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <span><i class="fas fa-plus-circle fa-lg"></i></span>
-                    </a>
+                    </a> {% endcomment %}
+                    <button type="button" class="btn nav-link chat" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <span><i class="fas fa-plus-circle fa-lg"></i></span>
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create a post</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        {% csrf_token %}
+                                        <label class="small mb-1" for="inputCaption">Caption</label>
+                                        {% render_field form.caption class='form-control' %}
+                                        
+                                        <label class="small mb-1" for="inputimages">Image</label><br>
+                                        <input class="form-control" type="file" multiple name="images" accept="image/*" id="id_images">
+                                        
+                                        {% render_field imageform.image class='form-control' %}
+                                        {{imageform.management_form}}
+                                        {% for form in imageform %}
+                                            {{form}}
+                                            <label class="small mb-1" for="inputimages">Image</label><br>
+                                            <input class="form-control" type="file" name="images" accept="image/*" id="id_images">
+                                        {% endfor %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn bottons">Post</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </li>
                 <li class="nav-item me-3 me-lg-1">
                     <a class="nav-link" href="{% url 'chat:chat_index' %}">

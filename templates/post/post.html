@@ -23,7 +23,7 @@
                                 </div>
                                 {% if post.user == request.user %}
                                     <div class="feed-icon px-2 dropdown">
-                                        <button class="btn btn-secondary dropdown" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
+                                        <button class="btn bottons dropdown" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
                                             <i class="fa fa-ellipsis-v text-black-50"></i>
                                         </button>
                                         <ul class="dropdown-menu">
@@ -98,7 +98,9 @@
 
             <div class="card rounded">
                 <div class="card-body">
-                    <h6 class="card-title d-flex justify-content-center border-bottom p-2"><b>People you may know</b></h6>
+                    <div class="d-flex justify-content-center mb-2">
+                        <h6 class="card-title border-bottom p-2"><b>People you may know</b></h6>
+                    </div>
                     {% for prof in users %}
                         <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
                             <div class="d-flex align-items-center hover-pointer">
@@ -117,7 +119,7 @@
                             <form action="{% url 'user:follow' user_self.pk %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
-                                <button id="follow" class="btn btn-primary btn-icon" type="submit" style="margin-left: 15px;">Follow</button>
+                                <button id="follow" class="btn bottons" type="submit" style="margin-left: 15px;">Follow</button>
                             </form>
                         </div>
                     {% endfor %}

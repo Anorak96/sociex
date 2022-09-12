@@ -16,6 +16,18 @@ li {
 .owl-dot.active span {
     background: #132D46 !important;
 }
+.bottons {
+    color: #fff!important;
+    background-color: #6D9773 !important;
+    border-color: #6D9773 !important;
+    box-shadow: none;
+}
+.edit-bottons {
+    color: #fff !important;
+    background-color: #FFBA00 !important;
+    border-color: #FFBA00 !important;
+    box-shadow: none;
+}
 /* ===============LOGIN============= */
 .login-body {
     width: 600px;
@@ -349,7 +361,9 @@ img {
 .nav-link {
     color: #FFFFFF !important;
 }
-
+.navbar-clr {
+    background-color: #092c22!important;
+}
 .nav-user:hover .dropdown-menu {
     display: block;
 }

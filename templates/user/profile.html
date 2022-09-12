@@ -20,10 +20,10 @@
                             </div>
                             <div class="d-none d-md-block profile-follow">
                                 {% if profiles == request.user %}
-                                    <button type="button" class="btn btn-primary btn-icon-text" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <button type="button" class="btn bottons btn-icon-text" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                         Post
                                     </button>
-                                    <a class="btn btn-primary btn-icon-text btn-edit-profile" href="{% url 'user:update' profiles %}">
+                                    <a class="btn edit-bottons btn-icon-text btn-edit-profile" href="{% url 'user:update' profiles %}">
                                         <i class="far fa-edit"></i> Edit profile
                                     </a>
                                 {% else %}
@@ -69,7 +69,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Post</button>
+                                        <button type="submit" class="btn bottons">Post</button>
                                     </div>
                                 </form>
                             </div>
@@ -107,7 +107,9 @@
                 <div class="d-none d-md-block col-md-4 col-xl-3 left-wrapper">
                     <div class="card rounded">
                         <div class="card-body">
-                            <h6 class="card-title d-flex justify-content-center border-bottom p-2"><b>People you may know</b></h6>
+                            <div class="d-flex justify-content-center mb-2">
+                                <h6 class="card-title border-bottom p-2"><b>People you may know</b></h6>
+                            </div>
                             {% for prof in users %}
                                 <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
                                     <div class="d-flex align-items-center hover-pointer">
@@ -124,7 +126,7 @@
                                     <form action="{% url 'user:follow' profiles.pk %}" method="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
-                                        <button id="follow" class="btn btn-primary btn-icon" type="submit" style="margin-left: 15px; margin-top: 9px;"><i class="fa-solid fa-user-plus"></i></button>
+                                        <button id="follow" class="btn bottons btn-icon" type="submit" style="margin-left: 15px; margin-top: 9px;"><i class="fa-solid fa-user-plus"></i></button>
                                     </form>
                                 </div>
                             {% endfor %}
@@ -149,7 +151,7 @@
                                         </div>
                                         {% if post.user == request.user %}
                                             <div class="feed-icon px-2 dropdown">
-                                                <button class="btn btn-secondary dropdown" type="button" data-bs-toggle="dropdown"  aria-expanded="false"
+                                                <button class="btn bottons dropdown" type="button" data-bs-toggle="dropdown"  aria-expanded="false"
                                                     aria-expanded="false">
                                                     <i class="fa fa-ellipsis-v text-black-50"></i>
                                                 </button>
@@ -241,17 +243,19 @@
                     <div class="col-md-12 grid-margin">
                         <div class="card rounded">
                             <div class="card-body">
-                                <div class="card-title border-bottom">
-                                    <div class="card-header p-2" style="background-color: rgba(0, 0, 0, 0);">
-                                        <div class="d-flex justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <b>Photos</b>
-                                            </div>
-                                            {% if photos.count > 9 %}
-                                                <div class="feed-icon px-2">
-                                                    <a href="">more<i class="fas fa-angle-double-right"></i></a>
+                                <div class="d-flex justify-content-center border-bottom mb-2">
+                                    <div class="card-title">
+                                        <div class="card-header p-2" style="background-color: rgba(0, 0, 0, 0);">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex align-items-center">
+                                                    <b>Photos</b>
                                                 </div>
-                                            {% endif %}
+                                                {% if photos.count > 9 %}
+                                                    <div class="feed-icon px-2">
+                                                        <a href="">more<i class="fas fa-angle-double-right"></i></a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
