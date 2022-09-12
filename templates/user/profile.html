@@ -1,0 +1,281 @@
+{% extends 'main/base.html' %}
+{% load widget_tweaks %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="profile-page tx-13">
+        <div class="row">
+            <div class="col-12 grid-margin">
+                <div class="profile-header">
+                    <div class="cover">
+                        <div class="gray-shade"></div>
+                        <figure>
+                            <img src="{{ profiles.cover_pic.url }}" class="img-fluid" alt="profile cover" style="height: 300px;">
+                        </figure>
+                        <div class="cover-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <img class="profile-pic" src="{{ profiles.profile_pic.url }}"
+                                    alt="profile">
+                                <span class="profile-name">{{ profiles.username|capfirst }}</span>
+                            </div>
+                            <div class="d-none d-md-block profile-follow">
+                                {% if profiles == request.user %}
+                                    <button type="button" class="btn btn-primary btn-icon-text" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        Post
+                                    </button>
+                                    <a class="btn btn-primary btn-icon-text btn-edit-profile" href="{% url 'user:update' profiles %}">
+                                        <i class="far fa-edit"></i> Edit profile
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'chat:chat_direct' profiles.pk %}" class="btn btn-primary btn-icon-text btn-edit-profile">Send Message</a>
+                                    <form action="{% url 'user:follow' profiles.pk %}" method="POST" class="btn btn-icon-text btn-edit-profile">
+                                        {% csrf_token %}
+                                        {% if profiles in request.user.following.all %}
+                                            <input type="hidden" name="prof_pk" value="{{ profiles.pk }}">
+                                            <button id="unfollow" class="btn btn-danger btn-icon-text btn-edit-profile" type="submit">Unfollow</button>
+                                        {% else %}
+                                            <input type="hidden" name="prof_pk" value="{{ profiles.pk }}">
+                                            <button id="follow" class="btn btn-primary btn-icon-text btn-edit-profile" type="submit">Follow</button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create a post</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        {% csrf_token %}
+                                        <label class="small mb-1" for="inputCaption">Caption</label>
+                                        {% render_field form.caption class='form-control' %}
+                                        
+                                        <label class="small mb-1" for="inputimages">Image</label><br>
+                                        <input class="form-control" type="file" multiple name="images" accept="image/*" id="id_images">
+                                        
+                                        {% render_field imageform.image class='form-control' %}
+                                        {{imageform.management_form}}
+                                        {% for form in imageform %}
+                                            {{form}}
+                                            <label class="small mb-1" for="inputimages">Image</label><br>
+                                            <input class="form-control" type="file" name="images" accept="image/*" id="id_images">
+                                        {% endfor %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Post</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-links">
+                        <ul class="links d-flex align-items-center mt-3 mt-md-0">
+                            <li class="header-link-item d-flex align-items-center active">
+                                <i class="fas fa-photo-video"></i>
+                                <a class="pt-1px d-none d-md-block" href="#"> Timeline</a>
+                            </li>
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                                <i class="fas fa-users"></i>
+                                <a class="pt-1px d-none d-md-block" href="#">Followering 
+                                    <span class="text-muted tx-12">{{profiles.get_followering_no}}</span>
+                                </a>
+                            </li>
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                                <i class="fas fa-users"></i>
+                                <a class="pt-1px d-none d-md-block" href="#">Followers
+                                    <span class="text-muted tx-12">{{profiles.get_follower_no}}</span>
+                                </a>
+                            </li>
+                            <li class="header-link-item ms-2 border-left d-flex align-items-center">
+                                <i class="far fa-image"></i>
+                                <a class="pt-1px d-none d-md-block" href="#">Photos</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row profile-body">
+            <!-- left wrapper start -->
+                <div class="d-none d-md-block col-md-4 col-xl-3 left-wrapper">
+                    <div class="card rounded">
+                        <div class="card-body">
+                            <h6 class="card-title d-flex justify-content-center border-bottom p-2"><b>People you may know</b></h6>
+                            {% for prof in users %}
+                                <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                                    <div class="d-flex align-items-center hover-pointer">
+                                        <a href="{% url 'user:profile' prof.pk %}">
+                                            <img class="img-xs rounded-circle" src="{{ prof.profile_pic.url }}" alt="">
+                                        </a>
+                                        <div class="mx-2">
+                                            <a href="{% url 'user:profile' prof.pk %}">
+                                                <p class="mb-1">{{prof|capfirst}}</p>
+                                            </a>
+                                            <p class="tx-11 text-muted mb-1">{{mutualfriends_num}} Mutual Friends</p>
+                                        </div>
+                                    </div>
+                                    <form action="{% url 'user:follow' profiles.pk %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="prof_pk" value="{{ prof.pk }}">
+                                        <button id="follow" class="btn btn-primary btn-icon" type="submit" style="margin-left: 15px; margin-top: 9px;"><i class="fa-solid fa-user-plus"></i></button>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>            
+            <!-- left wrapper end -->
+            <!-- middle wrapper start -->
+            <div class="col-md-8 col-xl-6 middle-wrapper">
+                <div class="row">
+                    {% for post in posts %}
+                        <div class="col-md-12 grid-margin">
+                            <div class="card rounded">
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <img class="img-xs rounded-circle" src="{{ post.user.profile_pic.url }}" alt="">
+                                            <div class="mx-2">
+                                                <p class="m-0"><b>{{ post.user|capfirst }}</b></p>
+                                                <p class="tx-11 text-muted m-0">{{ post.created_at }}</p>
+                                            </div>
+                                        </div>
+                                        {% if post.user == request.user %}
+                                            <div class="feed-icon px-2 dropdown">
+                                                <button class="btn btn-secondary dropdown" type="button" data-bs-toggle="dropdown"  aria-expanded="false"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v text-black-50"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="btn dropdown-item" href="{% url 'post:delete' post.pk %}">Delete</a></li>
+                                                    <li><a class="btn dropdown-item" href="{% url 'post:post_update' post.pk %}">Update</a></li>
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <a href="{% url 'post:detail' post.pk %}">
+                                        {% if post.caption %}
+                                            <p class="mb-3 tx-14">{{ post.caption }}</p>
+                                        {% endif %}             
+                                        {% if post.post_images %}
+                                            <div class="row owl-carousel owl-theme">
+                                                {% for image in post.post_images.all %}
+                                                    <img src="{{ image.image.url }}" class="item" style="object-fit: cover; height: 500px;">
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="d-flex justify-content-start p-1 border-top">
+                                    <form action="{% url 'post:like_post' %}" method="POST">
+                                        {% csrf_token %}
+                                        <button class="btn postLike" type="submit" value="{{post.pk}}">
+                                            {% if request.user not in post.likes.all %}
+                                                <i class="far fa-heart" style="color: rgb(5, 92, 163);"></i>
+                                            {% else %}
+                                                <i class="fa fa-heart" style="color: red;"></i>
+                                            {% endif %}
+                                            <span class="like_count">{{post.likes_no}}</span>
+                                        </button>
+                                    </form>
+                                    <a class="btn" href="{% url 'post:detail' post.pk %}">
+                                        <i class="fas fa-comments mx-1"></i><span>{{post.comment_no}}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- middle wrapper end -->
+            <!-- right wrapper start -->
+            <div class="d-none d-xl-block col-xl-3 right-wrapper position-sticky">
+                <div class="row">
+                    {% if profiles.get_followering_no > 0 %}
+                    <div class="col-md-12 grid-margin">
+                        <div class="card rounded">
+                            <div class="card-body">
+                                <div class="card-title border-bottom">
+                                    <div class="card-header p-2" style="background-color: rgba(0, 0, 0, 0);">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <b>Following</b> <span class="">({{profiles.get_followering_no}})</span>
+                                            </div>
+                                            {% if profiles.get_following %}
+                                                <div class="feed-icon px-2">
+                                                    <a href="">See All</a>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="latest-photos">
+                                    <div class="row">
+                                        {% for prof in profiles.get_following %}
+                                            <div class="col-md-4">
+                                                <figure class="p-1" style="background-color: #d7e0e0;">
+                                                    <a href="{% url 'user:profile' prof.pk %}">
+                                                        <img class="img-fluid rounded" src="{{ prof.profile_pic.url }}" alt="" style="height: 90px;">
+                                                        <figcaption class="figure-caption text-center text-info">{{prof|capfirst}}</figcaption>
+                                                    </a>
+                                                </figure>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if photos.count > 0 %}
+                    <div class="col-md-12 grid-margin">
+                        <div class="card rounded">
+                            <div class="card-body">
+                                <div class="card-title border-bottom">
+                                    <div class="card-header p-2" style="background-color: rgba(0, 0, 0, 0);">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <b>Photos</b>
+                                            </div>
+                                            {% if photos.count > 9 %}
+                                                <div class="feed-icon px-2">
+                                                    <a href="">more<i class="fas fa-angle-double-right"></i></a>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="latest-photos">
+                                    <div class="row">
+                                        {% for photo in photos %}
+                                            <div class="col-md-4">
+                                                <figure class="prof-img">
+                                                    {% if forloop.counter <= 9 %}
+                                                        <img class="img-fluid" src="{{ photo.image.url }}" alt="" style="height: 90px; width:70px;">
+                                                    {% endif %}
+                                                </figure>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- right wrapper end -->
+        </div>
+    </div>
+</div>
+{% endblock body %}

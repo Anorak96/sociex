@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "C:\\Users\\Public\\New folder\\Django\\sociex\\Scripts\\python.exe",
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "files.autoSave": "afterDelay"
+}

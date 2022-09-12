@@ -1,0 +1,92 @@
+{% extends "main/base.html" %}
+{% block title %} - Post Feed{% endblock title %}
+
+{% block body %}
+<div class="container mt-2">
+    <div class="p-2 shad mx-auto" id="{{post.pk}}" style="width: 670px;">
+        <div>
+            <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
+                <div class="d-flex flex-row align-items-center feed-text px-2">
+                    <a href="{% url 'user:profile' post.user.pk %}">
+                        <img class="rounded-circle" src="{{ post.user.profile_pic.url }}" style="object-fit: cover; width: 50px; height: 50px;">
+                    </a>
+                    <div class="d-flex flex-column flex-wrap mx-2">
+                        <a href="{% url 'user:profile' post.user.pk %}">
+                            <span style="font-weight: 600;">{{post.user|capfirst}}</span>
+                        </a>
+                        <span class="text-black-50 time">{{post.created_at}}</span>
+                    </div>
+                </div>
+                {% if post.user == request.user %}
+                    <div class="feed-icon px-2 dropdown">
+                        <button class="btn btn-secondary dropdown" type="button" data-bs-toggle="dropdown"  aria-expanded="false" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v text-black-50"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="btn dropdown-item" href="{% url 'post:delete' post.pk %}">Delete</a></li>
+                            <li><a class="btn dropdown-item" href="{% url 'post:post_update' post.pk %}">Update</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="p-2 px-3">
+            {% if post.caption %}
+                <span>{{post.caption}}</span><br>
+            {% endif %}
+            {% if post.post_images %}
+               <div class="row owl-carousel owl-theme">
+                    {% for image in post.post_images.all %}
+                            <img src="{{ image.image.url }}" class="item" style="object-fit: scale-down; height: 650px;">
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="d-flex justify-content-start p-1 border-top">
+            <form action="{% url 'post:like_post' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="post_id" value="{{post.id}}">
+                <button class="btn postLike" type="submit" value="{{post.pk}}">
+                    {% if request.user not in post.likes.all %}
+                        <i class="far fa-heart" style="color: rgb(5, 92, 163);"></i>
+                    {% else %}
+                        <i class="fa fa-heart" style="color: red;"></i>
+                    {% endif %}
+                    <span class="like_count">{{post.likes_no}}</span>
+                </button>
+            </form>
+            <a class="btn" href="{% url 'post:detail' post.pk %}">
+                <i class="fas fa-comments mx-1"></i><span>{{post.comment_no}}</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .owl-item .active {
+        width: 581px !important;
+    }
+</style>
+<script type="text/javascript">
+    $(document).on('click', '#postLike', function (e) {
+        e.preventDefault();
+        const post_id = $(this).attr('value')
+        $.ajax({
+            type: 'POST',
+            url: '{% url "post:like_post" %}',
+            data: {
+                post_id: post_id,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                action: 'post'
+            },
+            success: function (json) {
+                document.getElementById("like_count").innerHTML = json['likes_no']
+                console.log(json)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+</script>
+{% endblock %}
