@@ -102,7 +102,6 @@ class User(AbstractBaseUser):
 
     def get_all_permissions(user=None):
         if user.is_admin:
-            
             return set()
 
     def get_follower(self):

@@ -1,0 +1,13 @@
+.chat_active {
+    background-color: #E8DDCD;
+}
+
+.chat_sent {
+    display: flex !important;
+    justify-content: flex-start !important;
+}
+
+.chat_receive {
+    display: flex !important;
+    justify-content: flex-end !important;
+}

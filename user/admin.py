@@ -9,7 +9,7 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_admin',)
     fieldsets = (
         ('Info', {'fields': ('email', 'username', 'password', 'date_joined')}),
-        ('Others', {'fields': ('profile_pic', 'cover_pic')}),
+        ('Pictures', {'fields': ('profile_pic', 'cover_pic')}),
         ('Relationship', {'fields': ('follower', 'following')}),
         ('Permissions', {'fields': ('is_admin', 'is_active', 'is_superuser', 'is_staff')}),
         (None, {'fields': ('hide_email', 'last_login')}),

@@ -22,7 +22,7 @@ class ImageForm(forms.ModelForm):
         ]
 
 class CommentForm(forms.ModelForm):
-    comment = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'style': 'padding: 10px; resize: none;'}), required=False)
+    comment = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'style': 'padding: 10px; resize: none; margin-right:9px;'}), required=False)
     
     class Meta:
         model = Comment

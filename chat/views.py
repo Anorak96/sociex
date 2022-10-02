@@ -47,10 +47,8 @@ class ChatDirectView(LoginRequiredMixin, generic.View):
 
     def get(self, request, pk):
         form = ChatForm()
-
         user = request.user
         chats = Chat.get_messages(user=user)
-
         active_user = pk
         directs = Chat.objects.filter(Q(sender_user=user, receiver_user=pk) | Q(sender_user=pk, receiver_user=user)).annotate(last=Max('date')).order_by('last')
         directs.update(read=True)

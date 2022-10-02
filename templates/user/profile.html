@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %}
 {% load widget_tweaks %}
+{% load static %}
+<script type="text/javascript" src="{% static 'main/user.js' %}"></script>
 
 {% block body %}
 <div class="container-fluid">
@@ -18,7 +20,7 @@
                                     alt="profile">
                                 <span class="profile-name">{{ profiles.username|capfirst }}</span>
                             </div>
-                            <div class="d-none d-md-block profile-follow">
+                            <div class="d-none d-md-block">
                                 {% if profiles == request.user %}
                                     <button type="button" class="btn bottons btn-icon-text" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                         Post
@@ -27,15 +29,14 @@
                                         <i class="far fa-edit"></i> Edit profile
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'chat:chat_direct' profiles.pk %}" class="btn btn-primary btn-icon-text btn-edit-profile">Send Message</a>
-                                    <form action="{% url 'user:follow' profiles.pk %}" method="POST" class="btn btn-icon-text btn-edit-profile">
+                                    <a href="{% url 'chat:chat_direct' profiles.pk %}" class="btn btn-primary">Send Message</a>
+                                    <form action="{% url 'user:follow' profiles.pk %}" method="POST" class="btn" id="follow_form">
                                         {% csrf_token %}
+                                        <input type="hidden" name="prof_pk" value="{{ profiles.pk }}">
                                         {% if profiles in request.user.following.all %}
-                                            <input type="hidden" name="prof_pk" value="{{ profiles.pk }}">
-                                            <button id="unfollow" class="btn btn-danger btn-icon-text btn-edit-profile" type="submit">Unfollow</button>
+                                            <button id="unfollow" class="btn btn-danger" type="submit">Unfollow</button>
                                         {% else %}
-                                            <input type="hidden" name="prof_pk" value="{{ profiles.pk }}">
-                                            <button id="follow" class="btn btn-primary btn-icon-text btn-edit-profile" type="submit">Follow</button>
+                                            <button id="follow" class="btn btn-primary" type="submit">Follow</button>
                                         {% endif %}
                                     </form>
                                 {% endif %}
@@ -166,7 +167,7 @@
                                 <div class="card-body">
                                     <a href="{% url 'post:detail' post.pk %}">
                                         {% if post.caption %}
-                                            <p class="mb-3 tx-14">{{ post.caption }}</p>
+                                            <span>{{ post.caption }}</span>
                                         {% endif %}             
                                         {% if post.post_images %}
                                             <div class="row owl-carousel owl-theme">
@@ -178,17 +179,15 @@
                                     </a>
                                 </div>
                                 <div class="d-flex justify-content-start p-1 border-top">
-                                    <form action="{% url 'post:like_post' %}" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn postLike" type="submit" value="{{post.pk}}">
-                                            {% if request.user not in post.likes.all %}
-                                                <i class="far fa-heart" style="color: rgb(5, 92, 163);"></i>
-                                            {% else %}
-                                                <i class="fa fa-heart" style="color: red;"></i>
-                                            {% endif %}
-                                            <span class="like_count">{{post.likes_no}}</span>
-                                        </button>
-                                    </form>
+                                    <div class="btn" id="likeBTN">
+                                        <input type="hidden" id="post_pk" value="{{post.pk}}">
+                                        {% if request.user not in post.likes.all %}
+                                            <i class="far fa-heart" style="color: rgb(5, 92, 163);"></i>
+                                        {% else %}
+                                            <i class="fa fa-heart" style="color: red;"></i>
+                                        {% endif %}
+                                        <span id="like_count">{{post.likes_no}}</span>
+                                    </div>
                                     <a class="btn" href="{% url 'post:detail' post.pk %}">
                                         <i class="fas fa-comments mx-1"></i><span>{{post.comment_no}}</span>
                                     </a>
@@ -205,34 +204,28 @@
                     {% if profiles.get_followering_no > 0 %}
                     <div class="col-md-12 grid-margin">
                         <div class="card rounded">
-                            <div class="card-body">
-                                <div class="card-title border-bottom">
-                                    <div class="card-header p-2" style="background-color: rgba(0, 0, 0, 0);">
-                                        <div class="d-flex justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <b>Following</b> <span class="">({{profiles.get_followering_no}})</span>
-                                            </div>
-                                            {% if profiles.get_following %}
-                                                <div class="feed-icon px-2">
-                                                    <a href="">See All</a>
-                                                </div>
-                                            {% endif %}
-                                        </div>
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
+                                    <b>Following<span>({{profiles.get_followering_no}})</span></b> 
+                                    {% if profiles.get_following %}
+                                    <div class="feed-icon px-2">
+                                        <a href="">See All</a>
                                     </div>
+                                    {% endif %}
                                 </div>
-                                <div class="latest-photos">
-                                    <div class="row">
-                                        {% for prof in profiles.get_following %}
-                                            <div class="col-md-4">
-                                                <figure class="p-1" style="background-color: #d7e0e0;">
-                                                    <a href="{% url 'user:profile' prof.pk %}">
-                                                        <img class="img-fluid rounded" src="{{ prof.profile_pic.url }}" alt="" style="height: 90px;">
-                                                        <figcaption class="figure-caption text-center text-info">{{prof|capfirst}}</figcaption>
-                                                    </a>
-                                                </figure>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    {% for prof in profiles.get_following %}
+                                        <div class="col-md-4 card p-0 bg-light">
+                                            <a href="{% url 'user:profile' prof.pk %}">
+                                                <div class="m-1">
+                                                    <img class="img-fluid rounded" src="{{ prof.profile_pic.url }}" alt="" style="height: 100px;">
+                                                    <div class="card-text text-center text-info font-weight-normal">{{prof|capfirst}}</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -242,23 +235,17 @@
                     {% if photos.count > 0 %}
                     <div class="col-md-12 grid-margin">
                         <div class="card rounded">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-center border-bottom mb-2">
-                                    <div class="card-title">
-                                        <div class="card-header p-2" style="background-color: rgba(0, 0, 0, 0);">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <b>Photos</b>
-                                                </div>
-                                                {% if photos.count > 9 %}
-                                                    <div class="feed-icon px-2">
-                                                        <a href="">more<i class="fas fa-angle-double-right"></i></a>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
+                                    <b>Photos</b>
+                                    {% if photos.count > 9 %}
+                                        <div class="feed-icon px-2">
+                                            <a href="">more<i class="fas fa-angle-double-right"></i></a>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                 </div>
+                            </div>
+                            <div class="card-body pt-1">
                                 <div class="latest-photos">
                                     <div class="row">
                                         {% for photo in photos %}

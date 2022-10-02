@@ -13,7 +13,6 @@ class CreateUserForm(UserCreationForm):
         ]
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField(max_length=40)
     username = forms.CharField(max_length=30, help_text='Username cannot be edited.')
 
     class Meta:

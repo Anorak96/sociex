@@ -143,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -190,14 +190,14 @@ JAZZMIN_SETTINGS = {
     "login_logo_dark": "images/logo.png",
     # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
     "site_icon": "images/favicon.ico",
-    # The model admin to search from the search bar, search bar omitted if excluded
-    # "search_model": "Post.Posts",
     # Custom icons for side menu apps/models 
     # See https://fontawesome.com/icons?d=gallery&m=free&v=5.0.0,5.0.1,5.0.10,5.0.11,5.0.12,5.0.13
     # for the full list of 5.13.0 free icon classes
     "icons": {
-        "user.users": "fas fa-users",
+        "chat.chats": "fas fa-users-cog",
     },
+    # # Icons that are used when one is not manually specified
+    "default_icon_children": "fas fa-yin-yang",
     # List of apps (and/or models) to base side menu ordering off of (does not need to contain all apps/models)
     "order_with_respect_to": ["User", "Post", "Chat"],
     "related_modal_active": True

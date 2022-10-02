@@ -8,9 +8,9 @@ from post.forms import PostForm
 from django.contrib import messages
 from django.views.generic.edit import FormMixin
 from .models import User
+from django.http import JsonResponse
 from post.models import Post, Image, Comment
 
-# Create your views here.
 class RegisterView(generic.View):
     template_name = 'user/register.html'
 
@@ -62,7 +62,6 @@ class LogoutView(generic.View):
         return redirect('user:login')
 
 class UserDetailView(FormMixin, generic.DetailView):
-    # login_url = 'user:login'
     model = User
     template_name = "user/profile.html"
     context_object_name = 'profiles'
@@ -85,21 +84,16 @@ class UserDetailView(FormMixin, generic.DetailView):
         users = User.objects.get_user_to_follow(pk=user)
         for user in users:
             other_follow = user.get_following()
-        
             user_follow = self.request.user.get_following()
-
             friends = []
-            print(friends)
-
             for f1 in user_follow:
                 for f2 in other_follow:
                     if f1 == f2:
                         mut_user = f1
                         friends.append(mut_user)
-                        print(mut_user)
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         form = PostForm(request.POST, request.FILES)
         images = request.FILES.getlist("images")
         user = User.objects.get(pk=request.user.pk)
@@ -107,10 +101,8 @@ class UserDetailView(FormMixin, generic.DetailView):
             instance = form.save(commit=False)
             instance.user = user
             instance.save()
-            
             for i in images:
                 image = Image.objects.create(post=instance, image=i)
-
             messages.success(request, "Post Created")
             return self.form_valid(form)
         else:
@@ -163,3 +155,6 @@ class FollowView(LoginRequiredMixin, generic.View):
                 my_profile.following.add(profile)
                 profile.follower.add(my_profile)
             return redirect(request.META.get('HTTP_REFERER'))
+
+    # def post(self, request):
+    #     return JsonResponse('it works', safe=False)

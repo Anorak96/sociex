@@ -10,7 +10,6 @@ from user.models import User
 def get_post_image(instance, filename):
     upload_to = '{}/{}/{}'.format('user', instance.post.user, 'post')
     ext = filename.split('.')[-1]
-    # filename = '{}_{}_{}.{}'.format(instance.post.user, 'post', uuid4().hex, ext)
     date = instance.post.created_at.strftime('%Y%m%d%H%M%S')
     filename = '{}_{}_{}{}.{}'.format(instance.post.user, 'post', date, uuid4().hex, ext)
     return os.path.join(upload_to, filename)
@@ -25,7 +24,7 @@ class Post(models.Model):
     # objects: PostManager()
 
     def __str__(self):
-        return f"{self.user} -- {self.caption[0:20]}"
+        return f"{self.pk}-{self.user} -- {self.caption[0:20]}"
     
     class Meta:
         ordering = ('-created_at',)
@@ -50,8 +49,8 @@ class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_images')
     image = models.ImageField(upload_to=get_post_image, blank=True, null=True, validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
 
-    def image_tag(self): # new
-        return mark_safe('<img src="/../../media/%s" width="150" height="150" />' % (self.image))
+    def image_tag(self):
+        return mark_safe('<img src="/../../media/%s" width="100" height="100" />' % (self.image))
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_user')
@@ -64,3 +63,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user} commented {self.post} -- {self.comment[0:20]}"
+
+    def save(self, *args, **kwargs):
+        self.created_at = datetime.datetime.now()
+        super(Comment, self).save(*args, **kwargs)
