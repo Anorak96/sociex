@@ -63,7 +63,7 @@ class LogoutView(generic.View):
 
 class UserDetailView(FormMixin, generic.DetailView):
     model = User
-    template_name = "user/profile.html"
+    template_name = "user/timeline.html"
     context_object_name = 'profiles'
     form_class = PostForm
 
@@ -156,5 +156,14 @@ class FollowView(LoginRequiredMixin, generic.View):
                 profile.follower.add(my_profile)
             return redirect(request.META.get('HTTP_REFERER'))
 
-    # def post(self, request):
-    #     return JsonResponse('it works', safe=False)
+class FollowingView(LoginRequiredMixin, generic.View):
+    login_url = 'user:login'
+    redirect_field_name = 'redirect_to'
+    template_name = "user/following.html"
+
+    def get(self, request, pk):
+        profile = User.objects.get(pk=request.user.pk)
+        following = profile.get_following()
+
+        context = {'following': following}
+        return render(request, self.template_name, context)

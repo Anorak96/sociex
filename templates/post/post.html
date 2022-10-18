@@ -66,22 +66,6 @@
                     </div>
                 </div>
             {% endfor %}
-
-            <div class="d-flex justify-content-center">
-                <div class="lds-ripple">
-                    <div></div>
-                    <div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="pagination">
-                {% if posts.has_next %}
-                    <a class="infinite-more-link" href="?page={{ posts.next_page_number }}"></a>
-                {% endif %}
-            </div>
-                     
         </div>
          <div class="col-md-4 following">
             <div class="shad" style="padding: 15px 13px;">

@@ -170,6 +170,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = 'sent_emails'
 
+LOGOUT_REDIRECT_URL = 'user:login'
+
+LOGIN_REDIRECT_URL = 'post:posts'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 JAZZMIN_SETTINGS = {
